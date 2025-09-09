@@ -1,0 +1,42 @@
+package br.com.alura.screenmatch.principal;
+
+import br.com.alura.screenmatch.modelos.Filme;
+import br.com.alura.screenmatch.modelos.Titulo;
+import br.com.alura.screenmatch.modelos.TituloOMDB;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.GsonBuilder;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Scanner;
+
+public class PrincipalComBusca {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        Scanner leitura = new Scanner(System.in);
+        System.out.println("Digite um filme para busca: ");
+        var busca = leitura.nextLine();
+
+        String endereco = "https://www.omdbapi.com/?t=" + busca + "&apikey=1ed8810a";
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(endereco))
+                .build();
+        HttpResponse<String> response = client
+                .send(request, HttpResponse.BodyHandlers.ofString());
+
+        String responseBody = response.body();
+        System.out.println(responseBody);
+
+        Gson gson = new Gson()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES)
+                .create();
+        TituloOMDB mytitle = gson.fromJson(responseBody,  TituloOMDB.class);
+        System.out.println(mytitle.toString());
+    }
+}
