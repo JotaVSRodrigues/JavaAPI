@@ -11,8 +11,16 @@ public class Main {
         String pessoaJson = "{"
                 + "\"Nome\": \"João\","
                 + "\"Idade\": 18,"
-//                + "\"Cidade\": \"São Paulo\","
+                + "\"Cidade\": \"São Paulo\","
                 + "\"Estudante\": true"
+                + "}";
+
+        String pessoaJson2 = "{"
+                + "\"Nome\": \"João\","
+                + "\"Idade\": 23,"
+                + "\"Cidade\": \"São Paulo\","
+                + "\"Estudante\": false,"
+                + "\"Habilidades\": \"Java, MySQL, Git\""
                 + "}";
         try {
             Pessoa pessoa = gson.fromJson(pessoaJson, Pessoa.class);
@@ -27,9 +35,18 @@ public class Main {
 
         // campo do livro
         ConnectionHTTP connection = new ConnectionHTTP();
-        String url = connection.encodeURL("https://openlibrary.org/search.json?q=", "the lord of the rings");
+        String url = connection.encodeURL(
+                "https://openlibrary.org/search.json?q=",
+                "the lord of the rings"
+        );
         String bookResponse = connection.connect(url);
-
         Livro livro = gson.fromJson(bookResponse, Livro.class);
+
+        Gson gsonAdapter = new GsonBuilder()
+                .registerTypeAdapter(Pessoa.class, new PessoaDeserializer())
+                .create();
+
+        Pessoa joao = gson.fromJson(pessoaJson2, Pessoa.class);
+        System.out.println(joao);
     }
 }
